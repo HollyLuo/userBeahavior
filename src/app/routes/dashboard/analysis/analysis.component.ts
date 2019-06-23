@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 let Highcharts = require('highcharts');
 require('highcharts/modules/exporting')(Highcharts);
@@ -9,18 +9,117 @@ require('highcharts/modules/sunburst')(Highcharts);
 @Component({
   selector: 'app-dashboard-analysis',
   templateUrl: './analysis.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardAnalysisComponent implements OnInit {
+  // userActiveTimeChart: Chart;
 
-  constructor(private http: _HttpClient) { }
+  constructor(private http: _HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
+
+  }
+  ngAfterViewInit() {
     this.getUserActiveTime();
-    this.getBulkActionTimeCompare();
     this.getDifferentRequestTypeActiveTime();
     this.getDifferentProcessTypeActiveTime();
     this.getDifferentProcessTeamActiveTime();
+    this.getBulkActionTimeCompare();
+    this.cdr.detectChanges();
   }
+
+  getUserActiveTime() {
+    Highcharts.chart('userActiveTime-container', {
+      chart: {
+        zoomType: 'xy'
+      },
+      title: {
+        text: 'User Number and Average Active Time'
+      },
+      subtitle: {
+        text: 'Interval = 10min'
+      },
+      xAxis: [{
+        type: 'datetime',
+        categories: [
+          '11/05/2018', '11/05/2018', '11/06/2018', '11/07/2018', '11/08/2018', '11/09/2018'
+        ],
+        crosshair: true
+      }],
+      yAxis: [{ // Primary yAxis
+        min: 50,
+        labels: {
+          format: '{value}',
+          style: {
+            color: Highcharts.getOptions().colors[2]
+          }
+        },
+        title: {
+          text: 'Count',
+          style: {
+            color: Highcharts.getOptions().colors[2]
+          }
+        },
+        opposite: true
+      }, { // Secondary yAxis
+        gridLineWidth: 0,
+        title: {
+          text: 'Time(hh:mm:ss)',
+          style: {
+            color: Highcharts.getOptions().colors[0]
+          }
+        },
+        type: 'datetime',
+        dateTimeLabelFormats: {
+          second: '%H:%M:%S'
+        },
+        tooltipValueFormat: '{value:%H:%M:%S}',
+        labels: {
+          // format: '{value}',
+          style: {
+            color: Highcharts.getOptions().colors[0]
+          }
+        }
+      }],
+      tooltip: {
+        shared: true
+        //pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.formattedValue}</b><br/>'
+      },
+      legend: {
+        layout: 'vertical',
+        align: 'left',
+        x: 80,
+        verticalAlign: 'top',
+        y: 55,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+      },
+      series: [{
+        name: 'User Number',
+        type: 'column',
+        data: [78, 81, 79, 80, 71],
+        tooltip: {
+          valueSuffix: ''
+        }
+      }, {
+        name: 'Average Active Time',
+        type: 'spline',
+        yAxis: 1,
+        data: [Date.UTC(1970, 1, 1, 1, 42, 11),
+        Date.UTC(1970, 1, 1, 1, 38, 54),
+        Date.UTC(1970, 1, 1, 1, 48, 32),
+        Date.UTC(1970, 1, 1, 1, 45, 53),
+        Date.UTC(1970, 1, 1, 1, 29, 56)],
+        tooltip: {
+          pointFormat: '{series.name}: <b> {point.y} </b><br/>',
+          // valueSuffix: ''
+
+        }
+
+      }]
+    });
+  }
+
   getDifferentProcessTeamActiveTime() {
     Highcharts.setOptions({
       lang: {
@@ -30,7 +129,7 @@ export class DashboardAnalysisComponent implements OnInit {
     var data = [{
       'id': '0.0',
       'parent': '',
-      'name': 'The World'
+      'name': 'Global World'
     }, {
       'id': '1.1',
       'parent': '0.0',
@@ -53,70 +152,70 @@ export class DashboardAnalysisComponent implements OnInit {
       'id': '2.1',
       'parent': '1.1',
       'name': 'APAC Security & Pricing',
-      'value': 1111
+      'value': 17.84
     },
     {
       'id': '2.2',
       'parent': '1.1',
       'name': 'APAC Custody',
-      'value': 1111
+      'value': 8.25
     },
     {
       'id': '2.3',
       'parent': '1.1',
-      'name': 'APAC 3',
-      'value': 1111
+      'name': 'APAC GPU Security',
+      'value': 7.94
     },
     {
       'id': '2.4',
       'parent': '1.1',
-      'name': 'APAC 4',
-      'value': 1111
+      'name': 'APAC GPU Pricing',
+      'value': 3.55
     },
     /* EMEA */
     {
       'id': '2.5',
       'parent': '1.2',
-      'name': 'EMEA 1',
-      'value': 2222
+      'name': 'EMEA Security & Pricing',
+      'value': 16.79
     },
     {
       'id': '2.6',
       'parent': '1.2',
-      'name': 'EMEA 2',
-      'value': 2222
+      'name': 'EMEA Custody',
+      'value': 13.08
     },
     {
       'id': '2.7',
       'parent': '1.2',
-      'name': 'EMEA 3',
-      'value': 2222
+      'name': 'EMEA Rates',
+      'value': 0.02
     },
     /* NAM */
     {
       'id': '2.8',
       'parent': '1.3',
-      'name': 'NAM 3',
-      'value': 2222
+      'name': 'NAM Security & Pricing',
+      'value': 19.80
     },
     {
       'id': '2.9',
       'parent': '1.3',
-      'name': 'NAM 3',
-      'value': 1111
+      'name': 'NAM Custody',
+      'value': 5.59
     },
     /* GLOBAL */
     {
       'id': '2.10',
       'parent': '1.4',
-      'name': 'NAM 3',
-      'value': 2222
+      'name': 'GLOBAL SMC Operations',
+      'value': 3.77
     },
     {
       'id': '2.11',
       'parent': '1.4',
-      'name': 'NAM 3',
-      'value': 1111
+      'name': 'GLOBAL Security Projects',
+      'value': 0.17
     },
     ];
     // Splice in transparent for the center circle
@@ -126,11 +225,12 @@ export class DashboardAnalysisComponent implements OnInit {
         height: '100%'
       },
       title: {
-        text: '2017 世界人口分布'
+        text: 'Different Processing Team'
       },
-      subtitle: {
-        text: '数据来源： <href="https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)">Wikipedia</a>'
-      },
+      // subtitle: {
+      //   text: ''
+      // },
+
       series: [{
         type: "sunburst",
         data: data,
@@ -168,7 +268,7 @@ export class DashboardAnalysisComponent implements OnInit {
       }],
       tooltip: {
         headerFormat: "",
-        pointFormat: '<b>{point.name}</b>的人口数量是：<b>{point.value}</b>'
+        pointFormat: '<b>{point.name}</b>：<b>{point.value}</b>'
       }
     });
   }
@@ -181,10 +281,10 @@ export class DashboardAnalysisComponent implements OnInit {
         type: 'pie'
       },
       title: {
-        text: 'Process Type'
+        text: 'Different Process Type'
       },
       tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
       },
       plotOptions: {
         pie: {
@@ -192,7 +292,7 @@ export class DashboardAnalysisComponent implements OnInit {
           cursor: 'pointer',
           dataLabels: {
             enabled: true,
-            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            format: '<b>{point.name}</b>: {point.percentage:.2f} %',
             style: {
               color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
             }
@@ -200,37 +300,25 @@ export class DashboardAnalysisComponent implements OnInit {
         }
       },
       series: [{
-        name: 'Brands',
+        name: 'Process Type',
         colorByPoint: true,
         data: [{
-          name: 'Chrome',
-          y: 61.41,
+          name: 'Client Individual',
+          y: 60.54,
           sliced: true,
           selected: true
         }, {
-          name: 'Internet Explorer',
-          y: 11.84
+          name: 'DQ',
+          y: 22.98
         }, {
-          name: 'Firefox',
-          y: 10.85
+          name: 'Automation Rule',
+          y: 16.18
         }, {
-          name: 'Edge',
-          y: 4.67
+          name: 'Outlook Plugin',
+          y: 0.27
         }, {
-          name: 'Safari',
-          y: 4.18
-        }, {
-          name: 'Sogou Explorer',
-          y: 1.64
-        }, {
-          name: 'Opera',
-          y: 1.6
-        }, {
-          name: 'QQ',
-          y: 1.2
-        }, {
-          name: 'Other',
-          y: 2.61
+          name: 'Others',
+          y: 0.03
         }]
       }]
     });
@@ -244,10 +332,10 @@ export class DashboardAnalysisComponent implements OnInit {
         type: 'pie'
       },
       title: {
-        text: '2018年1月浏览器市场份额'
+        text: 'Different Request Type'
       },
       tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
       },
       plotOptions: {
         pie: {
@@ -255,7 +343,7 @@ export class DashboardAnalysisComponent implements OnInit {
           cursor: 'pointer',
           dataLabels: {
             enabled: true,
-            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            format: '<b>{point.name}</b>: {point.percentage:.2f} %',
             style: {
               color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
             }
@@ -263,37 +351,28 @@ export class DashboardAnalysisComponent implements OnInit {
         }
       },
       series: [{
-        name: 'Brands',
+        name: 'Request Type',
         colorByPoint: true,
         data: [{
-          name: 'Chrome',
-          y: 61.41,
+          name: 'Securities',
+          y: 57.86,
           sliced: true,
           selected: true
         }, {
-          name: 'Internet Explorer',
-          y: 11.84
+          name: 'Custody',
+          y: 25.72
         }, {
-          name: 'Firefox',
-          y: 10.85
+          name: 'GPU',
+          y: 11.69
         }, {
-          name: 'Edge',
-          y: 4.67
+          name: 'Event',
+          y: 2.93
         }, {
-          name: 'Safari',
-          y: 4.18
+          name: 'Pricing',
+          y: 1.79
         }, {
-          name: 'Sogou Explorer',
-          y: 1.64
-        }, {
-          name: 'Opera',
-          y: 1.6
-        }, {
-          name: 'QQ',
-          y: 1.2
-        }, {
-          name: 'Other',
-          y: 2.61
+          name: 'Rates',
+          y: 0.02
         }]
       }]
     });
@@ -382,81 +461,6 @@ export class DashboardAnalysisComponent implements OnInit {
       }]
     });
   }
-  getUserActiveTime() {
-    Highcharts.chart('container', {
-      chart: {
-        zoomType: 'xy'
-      },
-      title: {
-        text: '东京月平均天气数据'
-      },
-      subtitle: {
-        text: '数据来源: WorldClimate.com'
-      },
-      xAxis: [{
-        categories: [
-          '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'
-        ],
-        crosshair: true
-      }],
-      yAxis: [{ // Primary yAxis
-        labels: {
-          format: '{value}°C',
-          style: {
-            color: Highcharts.getOptions().colors[2]
-          }
-        },
-        title: {
-          text: '温度',
-          style: {
-            color: Highcharts.getOptions().colors[2]
-          }
-        },
-        opposite: true
-      }, { // Secondary yAxis
-        gridLineWidth: 0,
-        title: {
-          text: '降雨量',
-          style: {
-            color: Highcharts.getOptions().colors[0]
-          }
-        },
-        labels: {
-          format: '{value} mm',
-          style: {
-            color: Highcharts.getOptions().colors[0]
-          }
-        }
-      }],
-      tooltip: {
-        shared: true
-      },
-      legend: {
-        layout: 'vertical',
-        align: 'left',
-        x: 80,
-        verticalAlign: 'top',
-        y: 55,
-        floating: true,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
-      },
-      series: [{
-        name: '降雨量',
-        type: 'column',
-        yAxis: 1,
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-        tooltip: {
-          valueSuffix: ' mm'
-        }
-      }, {
-        name: '温度',
-        type: 'spline',
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
-        tooltip: {
-          valueSuffix: ' °C'
-        }
-      }]
-    });
-  }
+
 
 }

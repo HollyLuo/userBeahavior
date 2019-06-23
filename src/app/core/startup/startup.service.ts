@@ -108,6 +108,7 @@ export class StartupService {
       {
         text: '主导航',
         group: true,
+        i18n: 'menu.main',
         children: [
           {
             text: '仪表盘',
@@ -119,11 +120,17 @@ export class StartupService {
                 link: '/dashboard/analysis',
                 i18n: 'menu.dashboard.analysis',
               },
+              {
+                text: 'Productivity',
+                link: '/dashboard/productivity',
+                // i18n: 'menu.dashboard.productivity',
+              }
             ],
           },
           {
             text: '快捷菜单',
             icon: { type: 'icon', value: 'rocket' },
+            i18n: 'menu.shortcut',
             shortcutRoot: true
           }
         ]

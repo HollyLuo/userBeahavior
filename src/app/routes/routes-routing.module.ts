@@ -9,6 +9,7 @@ import { LayoutPassportComponent } from '../layout/passport/passport.component';
 // dashboard pages
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardAnalysisComponent } from './dashboard/analysis/analysis.component';
+import { DashboardProductivityComponent } from './dashboard/productivity/productivity.component';
 // passport pages
 import { UserLoginComponent } from './passport/login/login.component';
 import { UserRegisterComponent } from './passport/register/register.component';
@@ -27,6 +28,7 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent, data: { title: '仪表盘' } },
       { path: 'exception', loadChildren: './exception/exception.module#ExceptionModule' },
       { path: 'dashboard/analysis', component: DashboardAnalysisComponent },
+      { path: 'dashboard/productivity', component: DashboardProductivityComponent },
       // 业务子模块
       // { path: 'widgets', loadChildren: './widgets/widgets.module#WidgetsModule' }
     ]

@@ -26,6 +26,7 @@
 <div nz-row nzGutter="16"></div>
 <div nz-row nzGutter="16">
   <div nz-col nzXs="24" nzMd="12">
+
     <nz-card [nzBordered]="false" [nzTitle]="salesTitle">
       <ng-template #salesTitle>
         Sales Statistics
@@ -33,5 +34,6 @@
       </ng-template>
       <g2-bar *ngIf="salesData" height="275" [data]="salesData"></g2-bar>
     </nz-card>
+
   </div>
 </div>
