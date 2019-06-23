@@ -14,7 +14,6 @@ export class DashboardComponent implements OnInit {
   }));
 
 
-
   constructor(private http: _HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {

@@ -115,11 +115,6 @@ export class StartupService {
             icon: 'anticon-dashboard',
             children: [
               {
-                text: '仪表盘V1',
-                link: '/dashboard',
-                i18n: 'menu.dashboard.v1',
-              },
-              {
                 text: '分析页',
                 link: '/dashboard/analysis',
                 i18n: 'menu.dashboard.analysis',
