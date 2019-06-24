@@ -21,10 +21,11 @@ export class DashboardAnalysisComponent implements OnInit {
   }
   ngAfterViewInit() {
     this.getUserActiveTime();
+    this.getBulkActionTimeCompare();
     this.getDifferentRequestTypeActiveTime();
     this.getDifferentProcessTypeActiveTime();
     this.getDifferentProcessTeamActiveTime();
-    this.getBulkActionTimeCompare();
+
     this.cdr.detectChanges();
   }
 
@@ -33,12 +34,29 @@ export class DashboardAnalysisComponent implements OnInit {
       chart: {
         zoomType: 'xy'
       },
+      plotOptions: {
+        column: {
+          dataLabels: {
+            enabled: true,
+            allowOverlap: false,
+            inside: true,
+            verticalAlign: 'bottom'
+          }
+        },
+        spline: {
+          dataLabels: {
+            format: '{y:%H:%M:%S}',
+            enabled: true,
+            allowOverlap: false // 允许数据标签重叠
+          }
+        }
+      },
       title: {
         text: 'User Number and Average Active Time'
       },
-      subtitle: {
-        text: 'Interval = 10min'
-      },
+      // subtitle: {
+      //   text: 'Interval = 10min'
+      // },
       xAxis: [{
         type: 'datetime',
         categories: [
@@ -51,13 +69,13 @@ export class DashboardAnalysisComponent implements OnInit {
         labels: {
           format: '{value}',
           style: {
-            color: Highcharts.getOptions().colors[2]
+            color: Highcharts.getOptions().colors[0]
           }
         },
         title: {
           text: 'Count',
           style: {
-            color: Highcharts.getOptions().colors[2]
+            color: Highcharts.getOptions().colors[0]
           }
         },
         opposite: true
@@ -66,32 +84,32 @@ export class DashboardAnalysisComponent implements OnInit {
         title: {
           text: 'Time(hh:mm:ss)',
           style: {
-            color: Highcharts.getOptions().colors[0]
+            color: Highcharts.getOptions().colors[1]
           }
         },
         type: 'datetime',
         dateTimeLabelFormats: {
           second: '%H:%M:%S'
         },
-        tooltipValueFormat: '{value:%H:%M:%S}',
+        //tooltipValueFormat: '{second :%H:%M:%S}',
         labels: {
           // format: '{value}',
           style: {
-            color: Highcharts.getOptions().colors[0]
+            color: Highcharts.getOptions().colors[1]
           }
         }
       }],
       tooltip: {
         shared: true
-        //pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.formattedValue}</b><br/>'
       },
       legend: {
         layout: 'vertical',
-        align: 'left',
-        x: 80,
+        align: 'right',
+        x: -80,
         verticalAlign: 'top',
-        y: 55,
+        y: 20,
         floating: true,
+        borderWidth: 1,
         backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
       },
       series: [{
@@ -111,9 +129,8 @@ export class DashboardAnalysisComponent implements OnInit {
         Date.UTC(1970, 1, 1, 1, 45, 53),
         Date.UTC(1970, 1, 1, 1, 29, 56)],
         tooltip: {
-          pointFormat: '{series.name}: <b> {point.y} </b><br/>',
+          pointFormat: '<span style="color: {series.color}">\u25CF</span> {series.name}: <b> {point.y:%H:%M:%S} </b><br/>',
           // valueSuffix: ''
-
         }
 
       }]
@@ -237,20 +254,26 @@ export class DashboardAnalysisComponent implements OnInit {
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {
-          /**
-                 * A custom formatter that returns the name only if the inner arc
-                 * is longer than a certain pixel size, so the shape has place for
-                 * the label.
-                 */
-          formatter: function () {
-            var shape = this.point.node.shapeArgs;
-            var innerArcFraction = (shape.end - shape.start) / (2 * Math.PI);
-            var perimeter = 2 * Math.PI * shape.innerR;
-            var innerArcPixels = innerArcFraction * perimeter;
-            if (innerArcPixels > 16) {
-              return this.point.name;
-            }
+          format: '{point.name} {point.value:.2f}%',
+          filter: {
+            property: 'innerArcLength',
+            operator: '>',
+            value: 16
           }
+          // /**
+          //        * A custom formatter that returns the name only if the inner arc
+          //        * is longer than a certain pixel size, so the shape has place for
+          //        * the label.
+          //        */
+          // formatter: function () {
+          //   var shape = this.point.node.shapeArgs;
+          //   var innerArcFraction = (shape.end - shape.start) / (2 * Math.PI);
+          //   var perimeter = 2 * Math.PI * shape.innerR;
+          //   var innerArcPixels = innerArcFraction * perimeter;
+          //   if (innerArcPixels > 16) {
+          //     return this.point.name;
+          //   }
+          // }
         },
         levels: [{
           level: 2,
@@ -268,7 +291,7 @@ export class DashboardAnalysisComponent implements OnInit {
       }],
       tooltip: {
         headerFormat: "",
-        pointFormat: '<b>{point.name}</b>：<b>{point.value}</b>'
+        pointFormat: '<b>{point.name}</b>：<b>{point.value:.2f}%</b>'
       }
     });
   }
@@ -378,48 +401,77 @@ export class DashboardAnalysisComponent implements OnInit {
     });
   }
   getBulkActionTimeCompare() {
-    Highcharts.chart('userActionTime-container', {
+    Highcharts.chart('bulkAction-container', {
       chart: {
         zoomType: 'xy'
       },
+      credits: {
+        // enabled: false // 禁用版权信息
+        text: 'www.engage.cn'
+      },
+      plotOptions: {
+        column: {
+          dataLabels: {
+            enabled: false,
+            allowOverlap: false,
+            inside: true,
+
+          }
+        },
+        spline: {
+          dataLabels: {
+            format: '{y:%H:%M:%S}',
+            enabled: true,
+            allowOverlap: false // 允许数据标签重叠
+          }
+        }
+      },
       title: {
-        text: '东京月平均天气数据'
+        text: 'Assign and Bulk Assign Time Compare'
       },
-      subtitle: {
-        text: '数据来源: WorldClimate.com'
-      },
+      // subtitle: {
+      //   text: 'Interval = 10min'
+      // },
       xAxis: [{
+        type: 'datetime',
         categories: [
-          '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'
+          '11/05/2018', '11/05/2018', '11/06/2018', '11/07/2018', '11/08/2018', '11/09/2018'
         ],
         crosshair: true
       }],
       yAxis: [{ // Primary yAxis
+        // min: 400,
         labels: {
-          format: '{value}°C',
+          format: '{value}',
           style: {
-            color: Highcharts.getOptions().colors[2]
+            color: Highcharts.getOptions().colors[0]
           }
         },
         title: {
-          text: '温度',
+          text: 'Count',
           style: {
-            color: Highcharts.getOptions().colors[2]
+            color: Highcharts.getOptions().colors[0]
           }
         },
         opposite: true
       }, { // Secondary yAxis
+        // min:'00:00',
         gridLineWidth: 0,
         title: {
-          text: '降雨量',
+          text: 'Time(hh:mm)',
           style: {
-            color: Highcharts.getOptions().colors[0]
+            color: Highcharts.getOptions().colors[1]
           }
         },
+        type: 'datetime',
+        dateTimeLabelFormats: {
+          second: '%H:%M:%S'
+        },
+        // tooltipValueFormat: '{second :%H:%M:%S}',
         labels: {
-          format: '{value} mm',
+          format: '{value:%H:%M:%S}',
           style: {
-            color: Highcharts.getOptions().colors[0]
+            color: Highcharts.getOptions().colors[1]
           }
         }
       }],
@@ -428,39 +480,61 @@ export class DashboardAnalysisComponent implements OnInit {
       },
       legend: {
         layout: 'vertical',
-        align: 'left',
-        x: 80,
+        align: 'right',
+        x: -80,
         verticalAlign: 'top',
-        y: 55,
+        y: 20,
         floating: true,
+        borderWidth: 1,
         backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+
+        // layout: 'vertical',
+        // align: 'left',
+        // x: 80,
+        // verticalAlign: 'top',
+        // y: 55,
+        // floating: true,
+        // backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
       },
       series: [{
-        name: '降雨量',
+        name: 'Count',
         type: 'column',
-        yAxis: 1,
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-        tooltip: {
-          valueSuffix: ' mm'
-        }
-      }, {
-        name: '降雨量',
-        type: 'column',
-        yAxis: 1,
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-        tooltip: {
-          valueSuffix: ' mm'
-        }
-      }, {
-        name: '温度',
+        data: [590, 616, 586, 610, 429],
+        // tooltip: {
+        //   valueSuffix: ''
+        // }
+      },
+      {
+        name: 'Bulk Assign Time',
         type: 'spline',
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
+        yAxis: 1,
+        data: [Date.UTC(1970, 1, 1, 0, 7, 43),
+        Date.UTC(1970, 1, 1, 0, 9, 1),
+        Date.UTC(1970, 1, 1, 0, 7, 11),
+        Date.UTC(1970, 1, 1, 0, 7, 55),
+        Date.UTC(1970, 1, 1, 0, 4, 45)],
         tooltip: {
-          valueSuffix: ' °C'
+          pointFormat: '<span style="color: {series.color}">\u25CF</span> {series.name}: <b> {point.y:%H:%M:%S} </b><br/>',
+          // valueSuffix: ''
         }
-      }]
+      },
+      {
+        name: 'Normal Assign Time',
+        type: 'spline',
+        yAxis: 1,
+        data: [Date.UTC(1970, 1, 1, 1, 5, 5),
+        Date.UTC(1970, 1, 1, 1, 13, 2),
+        Date.UTC(1970, 1, 1, 1, 9, 41),
+        Date.UTC(1970, 1, 1, 1, 23, 16),
+        Date.UTC(1970, 1, 1, 0, 51, 28)],
+        tooltip: {
+          pointFormat: '<span style="color: {series.color}">\u25CF</span> {series.name}: <b> {point.y:%H:%M:%S} </b><br/>',
+          // valueSuffix: ''
+        }
+      }
+      ]
     });
-  }
 
+  }
 
 }
