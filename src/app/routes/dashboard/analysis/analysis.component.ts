@@ -60,7 +60,7 @@ export class DashboardAnalysisComponent implements OnInit {
       xAxis: [{
         type: 'datetime',
         categories: [
-          '11/05/2018', '11/05/2018', '11/06/2018', '11/07/2018', '11/08/2018', '11/09/2018'
+          '11/05/2018', '11/06/2018', '11/07/2018', '11/08/2018', '11/09/2018'
         ],
         crosshair: true
       }],
@@ -435,7 +435,7 @@ export class DashboardAnalysisComponent implements OnInit {
       xAxis: [{
         type: 'datetime',
         categories: [
-          '11/05/2018', '11/05/2018', '11/06/2018', '11/07/2018', '11/08/2018', '11/09/2018'
+          '11/05/2018', '11/06/2018', '11/07/2018', '11/08/2018', '11/09/2018'
         ],
         crosshair: true
       }],
